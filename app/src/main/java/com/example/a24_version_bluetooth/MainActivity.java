@@ -1,7 +1,5 @@
 package com.example.a24_version_bluetooth;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
@@ -10,21 +8,22 @@ import android.app.Activity;
 import android.os.Handler;
 import android.os.Message;
 import android.view.Menu;
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
-import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,11 +34,14 @@ public class MainActivity extends Activity {
     private static final String APP_NAME = "BIChat";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-223a-11e0-ac64-0803450c9a66");
 
-    Button listen, listDevices;
+    Button listen, send, listDevices;
     ListView listView;
-    TextView status;
+    TextView msg_box, status;
+    EditText writeMsg;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice[] btArray;
+
+    SendReceive sendReceive;
 
     static final int STATE_LISTENING = 1;
     static final int STATE_CONNECTING = 2;
@@ -75,6 +77,7 @@ public class MainActivity extends Activity {
                     public void onClick(View view){
                         Set<BluetoothDevice> bt=mBluetoothAdapter.getBondedDevices();
                         String[] strings=new String[bt.size()];
+                        btArray=new BluetoothDevice[bt.size()];
                         int index=0;
 
                         if(bt.size()>0){
@@ -104,6 +107,13 @@ public class MainActivity extends Activity {
                         clientClass.start();
 
                         status.setText("Connecting");
+                    }
+                });
+                send.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        String string= String.valueOf(writeMsg.getText());
+                        sendReceive.write(string.getBytes());
                     }
                 });
             }
@@ -149,7 +159,9 @@ public class MainActivity extends Activity {
                     status.setText("Connection Failed");
                     break;
                 case STATE_MESSAGE_RECEIVED:
-                    // we will write it later
+                    byte[] readBuff= (byte[]) msg.obj;
+                    String tempMsg=new String(readBuff,0,msg.arg1);
+                    msg_box.setText(tempMsg);
                     break;
             }
             return false;
@@ -199,7 +211,8 @@ public class MainActivity extends Activity {
                     message.what=STATE_CONNECTED;
                     handler.sendMessage(message);
 
-                    //write some code for send/receive
+                    sendReceive=new SendReceive(socket);
+                    sendReceive.start();
                     break;
                 }
             }
@@ -229,11 +242,61 @@ public class MainActivity extends Activity {
                 message.what=STATE_CONNECTED;
                 handler.sendMessage(message);
 
+                sendReceive=new SendReceive(socket);
+                sendReceive.start();
+
             } catch (IOException e) {
                 e.printStackTrace();
                 Message message=Message.obtain();
                 message.what=STATE_CONNECTION_FAILED;
                 handler.sendMessage(message);
+            }
+        }
+    }
+
+    private class SendReceive extends Thread
+    {
+        private final BluetoothSocket bluetoothSocket;
+        private final InputStream inputStream;
+        private final OutputStream outputStream;
+
+        private SendReceive(BluetoothSocket socket)
+        {
+            bluetoothSocket = socket;
+            InputStream tempIn = null;
+            OutputStream tempOut = null;
+
+            try {
+                tempIn=bluetoothSocket.getInputStream();
+                tempOut=bluetoothSocket.getOutputStream();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            inputStream=tempIn;
+            outputStream=tempOut;
+        }
+        public  void run()
+        {
+            byte[] buffer=new byte[1024];
+            int bytes;
+
+            while (true)
+            {
+                try{
+                bytes=inputStream.read(buffer);
+                handler.obtainMessage(STATE_MESSAGE_RECEIVED,bytes,-1,buffer).sendToTarget();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        public void write(byte[] bytes)
+        {
+            try {
+                outputStream.write(bytes);
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
     }
