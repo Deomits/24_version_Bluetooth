@@ -43,5 +43,34 @@
         android:text="TURN_OFF"
         android:onClick="sendMessage"/>
 
+    <Button
+        android:id="@+id/listen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/button3"
+        android:layout_below="@+id/button3"
+        android:layout_marginTop="28dp"
+        android:text="TURN_OFF"
+        android:onClick="sendMessage"/>
+
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/listen"
+        android:layout_below="@+id/listen"
+        android:layout_marginTop="28dp"
+        android:text="TURN_OFF"
+        android:onClick="sendMessage"/>
+
+    <Button
+        android:id="@+id/listDevices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/send"
+        android:layout_below="@+id/send"
+        android:layout_marginTop="28dp"
+        android:text="TURN_OFF"
+        android:onClick="sendMessage"/>
 
 </RelativeLayout>
