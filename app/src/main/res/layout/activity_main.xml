@@ -12,6 +12,29 @@
         android:layout_height="wrap_content">
     </TextView>
 
+    <TextView android:text=""
+        android:id="@+id/msg_box"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </TextView>
+
+    <TextView android:text=""
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+    </TextView>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_height="match_parent"
+        android:layout_width="match_parent"/>
+
+    <EditText
+        android:id="@+id/writeMsg"
+        android:layout_marginEnd="100dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <Button
         android:id="@+id/button1"
         android:layout_width="wrap_content"
@@ -50,7 +73,7 @@
         android:layout_alignLeft="@+id/button3"
         android:layout_below="@+id/button3"
         android:layout_marginTop="28dp"
-        android:text="TURN_OFF"
+        android:text="listen"
         android:onClick="sendMessage"/>
 
     <Button
@@ -60,7 +83,7 @@
         android:layout_alignLeft="@+id/listen"
         android:layout_below="@+id/listen"
         android:layout_marginTop="28dp"
-        android:text="TURN_OFF"
+        android:text="send"
         android:onClick="sendMessage"/>
 
     <Button
@@ -70,7 +93,7 @@
         android:layout_alignLeft="@+id/send"
         android:layout_below="@+id/send"
         android:layout_marginTop="28dp"
-        android:text="TURN_OFF"
+        android:text="list_Devices"
         android:onClick="sendMessage"/>
 
 </RelativeLayout>

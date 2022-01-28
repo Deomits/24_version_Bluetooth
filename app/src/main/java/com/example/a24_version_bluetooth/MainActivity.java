@@ -34,9 +34,8 @@ public class MainActivity extends Activity {
     private static final String APP_NAME = "BIChat";
     private static final UUID MY_UUID = UUID.fromString("8ce255c0-223a-11e0-ac64-0803450c9a66");
 
-    ListView listView;
-    TextView msg_box, status;
-    EditText writeMsg;
+
+    TextView status, msg_box;
     BluetoothAdapter mBluetoothAdapter;
     BluetoothDevice[] btArray;
 
@@ -54,6 +53,10 @@ public class MainActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         final TextView out = (TextView) findViewById(R.id.out);
+        final TextView status = (TextView) findViewById(R.id.status);
+        final TextView msg_box = (TextView) findViewById(R.id.msg_box);
+        final ListView listView = (ListView) findViewById(R.id.listView);
+        final EditText writeMsg = (EditText) findViewById(R.id.writeMsg);
         final Button button1 = (Button) findViewById(R.id.button1);
         final Button button2 = (Button) findViewById(R.id.button2);
         final Button button3 = (Button) findViewById(R.id.button3);
